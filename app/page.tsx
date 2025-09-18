@@ -36,7 +36,7 @@ export default function HomePage() {
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link href="https://github.com/flowdevkit" target="_blank">
+              <Link href="https://github.com/Izi-27/Flow-dev-starter" target="_blank">
                 <Github className="mr-2 h-4 w-4" />
                 View on GitHub
               </Link>
@@ -212,10 +212,10 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold">Community</h4>
+              <h4 className="font-semibold">Twitter</h4>
               <div className="space-y-2 text-sm">
                 <Link
-                  href="https://github.com/flowdevkit"
+                  href="https://x.com/flow_blockchain?s=21"
                   className="block text-muted-foreground hover:text-foreground"
                 >
                   GitHub
@@ -223,7 +223,7 @@ export default function HomePage() {
                 <Link href="https://discord.gg/flow" className="block text-muted-foreground hover:text-foreground">
                   Discord
                 </Link>
-                <Link href="https://forum.flow.com" className="block text-muted-foreground hover:text-foreground">
+                <Link href="https://developers.flow.com/ecosystem/developer-support-hub" className="block text-muted-foreground hover:text-foreground">
                   Forum
                 </Link>
               </div>
@@ -232,10 +232,10 @@ export default function HomePage() {
             <div className="space-y-4">
               <h4 className="font-semibold">Flow Ecosystem</h4>
               <div className="space-y-2 text-sm">
-                <Link href="https://flow.com" className="block text-muted-foreground hover:text-foreground">
+                <Link href="https://developers.flow.com/" className="block text-muted-foreground hover:text-foreground">
                   Flow.com
                 </Link>
-                <Link href="https://docs.flow.com" className="block text-muted-foreground hover:text-foreground">
+                <Link href="https://developers.flow.com/build/cadence/getting-started" className="block text-muted-foreground hover:text-foreground">
                   Flow Docs
                 </Link>
                 <Link href="https://cadence-lang.org" className="block text-muted-foreground hover:text-foreground">

@@ -343,13 +343,13 @@ export default function DocsPage() {
                     </Link>
                   </Button>
                   <Button variant="outline" className="w-full justify-start bg-transparent" asChild>
-                    <Link href="https://forum.flow.com" target="_blank">
+                    <Link href="https://developers.flow.com/ecosystem/developer-support-hub" target="_blank">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Flow Forum
                     </Link>
                   </Button>
                   <Button variant="outline" className="w-full justify-start bg-transparent" asChild>
-                    <Link href="https://github.com/flowdevkit" target="_blank">
+                    <Link href="https://github.com/onflow" target="_blank">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       GitHub Organization
                     </Link>
@@ -364,7 +364,7 @@ export default function DocsPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button variant="outline" className="w-full justify-start bg-transparent" asChild>
-                    <Link href="https://docs.onflow.org" target="_blank">
+                    <Link href="https://developers.flow.com/" target="_blank">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Flow Documentation
                     </Link>
@@ -405,7 +405,7 @@ export default function DocsPage() {
                     Found a bug in the docs or have suggestions for improvement?
                   </p>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="https://github.com/flowdevkit/docs/issues" target="_blank">
+                    <Link href="https://github.com/Izi-27/Flow-dev-starter/issues" target="_blank">
                       Report Issue
                     </Link>
                   </Button>
@@ -423,7 +423,7 @@ export default function DocsPage() {
                   <h4 className="font-semibold">Feature Requests</h4>
                   <p className="text-sm text-muted-foreground">Have an idea for a new template or feature?</p>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="https://github.com/flowdevkit/flowdevkit/discussions" target="_blank">
+                    <Link href="https://github.com/Izi-27/Flow-dev-starter" target="_blank">
                       Start Discussion
                     </Link>
                   </Button>

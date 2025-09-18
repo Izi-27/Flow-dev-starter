@@ -496,7 +496,7 @@ export default function CLIPage() {
             <Info className="h-4 w-4" />
             <AlertDescription>
               <strong>Prerequisites:</strong> Install the{" "}
-              <Link href="https://docs.onflow.org/flow-cli/install/" className="text-primary hover:underline">
+              <Link href="https://developers.flow.com/build/cadence/getting-started/flow-cli" className="text-primary hover:underline">
                 Flow CLI
               </Link>{" "}
               before using these scripts. All scripts are compatible with emulator, testnet, and mainnet.
@@ -587,7 +587,7 @@ chmod +x ${script.name}
                               <div>
                                 <strong>Flow CLI not found:</strong> Install from{" "}
                                 <Link
-                                  href="https://docs.onflow.org/flow-cli/install/"
+                                  href="https://developers.flow.com/build/cadence/getting-started/flow-cli"
                                   className="text-primary hover:underline"
                                 >
                                   official docs
@@ -671,7 +671,7 @@ flow init
 
               <div className="flex gap-4 pt-4 border-t">
                 <Button asChild>
-                  <Link href="https://github.com/flowdevkit/cli-tools">
+                  <Link href="https://github.com/onflow/fcl-js">
                     <Download className="mr-2 h-4 w-4" />
                     Download CLI Tools
                   </Link>
