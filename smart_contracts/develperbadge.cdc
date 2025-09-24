@@ -1,25 +1,25 @@
 import NonFungibleToken from 0x1d7e57aa55817448
 import MetadataViews from 0x1d7e57aa55817448
 
-pub contract DeveloperBadges: NonFungibleToken {
+access(all) contract DeveloperBadges: NonFungibleToken {
 
-    pub var totalSupply: UInt64
+    access(all) var totalSupply: UInt64
 
-    pub event ContractInitialized()
-    pub event Withdraw(id: UInt64, from: Address?)
-    pub event Deposit(id: UInt64, to: Address?)
-    pub event BadgeMinted(id: UInt64, recipient: Address, name: String)
+    access(all) event ContractInitialized()
+    access(all) event Withdraw(id: UInt64, from: Address?)
+    access(all) event Deposit(id: UInt64, to: Address?)
+    access(all) event BadgeMinted(id: UInt64, recipient: Address, name: String)
 
-    pub let CollectionStoragePath: StoragePath
-    pub let CollectionPublicPath: PublicPath
-    pub let AdminStoragePath: StoragePath
+    access(all) let CollectionStoragePath: StoragePath
+    access(all) let CollectionPublicPath: PublicPath
+    access(all) let AdminStoragePath: StoragePath
 
-    pub resource NFT: NonFungibleToken.INFT, MetadataViews.Resolver {
-        pub let id: UInt64
-        pub let name: String
-        pub let description: String
-        pub let thumbnail: String
-        pub let awardedDate: UFix64
+    access(all) resource NFT: NonFungibleToken.INFT, MetadataViews.Resolver {
+        access(all) let id: UInt64
+        access(all) let name: String
+        access(all) let description: String
+        access(all) let thumbnail: String
+        access(all) let awardedDate: UFix64
 
         init(
             id: UInt64,
@@ -34,7 +34,7 @@ pub contract DeveloperBadges: NonFungibleToken {
             self.awardedDate = getCurrentBlock().timestamp
         }
 
-        pub fun getViews(): [Type] {
+        access(all) fun getViews(): [Type] {
             return [
                 Type<MetadataViews.Display>(),
                 Type<MetadataViews.ExternalURL>(),
@@ -44,7 +44,7 @@ pub contract DeveloperBadges: NonFungibleToken {
             ]
         }
 
-        pub fun resolveView(_ view: Type): AnyStruct? {
+        access(all) fun resolveView(_ view: Type): AnyStruct? {
             switch view {
                 case Type<MetadataViews.Display>():
                     return MetadataViews.Display(
@@ -93,26 +93,26 @@ pub contract DeveloperBadges: NonFungibleToken {
         }
     }
 
-    pub resource interface DeveloperBadgesCollectionPublic {
-        pub fun deposit(token: @NonFungibleToken.NFT)
-        pub fun getIDs(): [UInt64]
-        pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
+    access(all) resource interface DeveloperBadgesCollectionPublic {
+        fun deposit(token: @NonFungibleToken.NFT)
+        fun getIDs(): [UInt64]
+        fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
     }
 
-    pub resource Collection: DeveloperBadgesCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
-        pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
+    access(all) resource Collection: DeveloperBadgesCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
+        access(all) var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
 
         init () {
             self.ownedNFTs <- {}
         }
 
-        pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
+        access(all) fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
             let token <- self.ownedNFTs.remove(key: withdrawID) ?? panic("missing NFT")
             emit Withdraw(id: token.id, from: self.owner?.address)
             return <-token
         }
 
-        pub fun deposit(token: @NonFungibleToken.NFT) {
+        access(all) fun deposit(token: @NonFungibleToken.NFT) {
             let badge <- token as! @DeveloperBadges.NFT
             let id: UInt64 = badge.id
             let oldToken <- self.ownedNFTs[id] <- badge
@@ -120,15 +120,15 @@ pub contract DeveloperBadges: NonFungibleToken {
             destroy oldToken
         }
 
-        pub fun getIDs(): [UInt64] {
+        access(all) fun getIDs(): [UInt64] {
             return self.ownedNFTs.keys
         }
 
-        pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
+        access(all) fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
             return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
-        pub fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
+        access(all) fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
             let nft = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
             let badge = nft as! &DeveloperBadges.NFT
             return badge as &AnyResource{MetadataViews.Resolver}
@@ -139,12 +139,12 @@ pub contract DeveloperBadges: NonFungibleToken {
         }
     }
 
-    pub fun createEmptyCollection(): @NonFungibleToken.Collection {
+    access(all) fun createEmptyCollection(): @NonFungibleToken.Collection {
         return <- create Collection()
     }
 
-    pub resource Admin {
-        pub fun mintBadge(
+    access(all) resource Admin {
+        access(all) fun mintBadge(
             recipient: &{NonFungibleToken.CollectionPublic},
             name: String,
             description: String,
