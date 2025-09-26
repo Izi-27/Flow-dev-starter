@@ -38,6 +38,16 @@ if ! command -v flow &> /dev/null; then
     exit 1
 fi
 
+# Configure flow.json
+if [ -f "flow.json" ]; then
+    read -p "⚠️  flow.json already exists. This will overwrite it. Continue? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborted."
+        exit 1
+    fi
+fi
+
 # Check if flow.json exists
 if [ ! -f "flow.json" ]; then
     echo "❌ flow.json not found. Initializing project..."
@@ -62,18 +72,25 @@ cat > flow.json << EOF
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
-    "testnet": "access.devnet.nodes.onflow.org:9000",
+    "testnet": "access.testnet.nodes.onflow.org:9000",
     "mainnet": "access.mainnet.nodes.onflow.org:9000"
   },
   "accounts": {
     "emulator-account": {
       "address": "f8d6e0586b0a20c7",
       "key": "2eae2f31cb5b756151fa11d82949c634b8f28796a711d7eb1e52cc301ed11111"
+    },
+    "testnet-account": {
+      "address": "YOUR_TESTNET_ADDRESS",
+      "key": "YOUR_TESTNET_PRIVATE_KEY"
     }
   },
   "deployments": {
-    "$NETWORK": {
+    "emulator": {
       "emulator-account": ["$CONTRACT_NAME"]
+    },
+    "testnet": {
+      "testnet-account": ["$CONTRACT_NAME"]
     }
   }
 }
@@ -87,6 +104,13 @@ if [ "$NETWORK" = "emulator" ]; then
         echo "🔧 Starting Flow emulator..."
         flow emulator start --verbose &
         sleep 5
+    fi
+fi
+
+if [ "$NETWORK" = "testnet" ]; then
+    if grep -q "YOUR_TESTNET_ADDRESS" "flow.json"; then
+        echo "🛑 Error: Please replace 'YOUR_TESTNET_ADDRESS' and 'YOUR_TESTNET_PRIVATE_KEY' in flow.json before deploying to testnet."
+        exit 1
     fi
 fi
 
@@ -149,7 +173,7 @@ cat > flow.json << EOF
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
-    "testnet": "access.devnet.nodes.onflow.org:9000",
+    "testnet": "access.testnet.nodes.onflow.org:9000",
     "mainnet": "access.mainnet.nodes.onflow.org:9000"
   },
   "accounts": {
