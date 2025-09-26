@@ -65,10 +65,10 @@ access(all) contract DeveloperBadges: NonFungibleToken {
                     return MetadataViews.NFTCollectionData(
                         storagePath: DeveloperBadges.CollectionStoragePath,
                         publicPath: DeveloperBadges.CollectionPublicPath,
-                        providerPath: /private/developerBadgesCollection,
-                        publicCollection: Type<&DeveloperBadges.Collection{DeveloperBadges.DeveloperBadgesCollectionPublic}>(),
+                        providerPath: /private/developerBadgesCollection, // This is a private path, so it's not exposed in the view
+                        publicCollection: Type<&DeveloperBadges.Collection{NonFungibleToken.CollectionPublic}>(),
                         publicLinkedType: Type<&DeveloperBadges.Collection{DeveloperBadges.DeveloperBadgesCollectionPublic, NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection}>(),
-                        providerLinkedType: Type<&DeveloperBadges.Collection{DeveloperBadges.DeveloperBadgesCollectionPublic, NonFungibleToken.CollectionPublic, NonFungibleToken.Provider, MetadataViews.ResolverCollection}>(),
+                        providerLinkedType: Type<&DeveloperBadges.Collection{NonFungibleToken.Provider, MetadataViews.ResolverCollection}>(),
                         createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
                             return <-DeveloperBadges.createEmptyCollection()
                         })
@@ -145,7 +145,7 @@ access(all) contract DeveloperBadges: NonFungibleToken {
 
     access(all) resource Admin {
         access(all) fun mintBadge(
-            recipient: &{NonFungibleToken.CollectionPublic},
+            recipient: &AnyResource{NonFungibleToken.CollectionPublic},
             name: String,
             description: String,
             thumbnail: String
