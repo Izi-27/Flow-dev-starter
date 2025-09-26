@@ -1,5 +1,6 @@
 import NonFungibleToken from 0x1d7e57aa55817448
 import MetadataViews from 0x1d7e57aa55817448
+import Crypto from 0x1d7e57aa55817448
 
 access(all) contract DeveloperBadges: NonFungibleToken {
 
@@ -13,7 +14,15 @@ access(all) contract DeveloperBadges: NonFungibleToken {
     access(all) let CollectionStoragePath: StoragePath
     access(all) let CollectionPublicPath: PublicPath
     access(all) let AdminStoragePath: StoragePath
+    access(all) let MinterStoragePath: StoragePath
+    access(all) let MinterPublicPath: PublicPath
 
+    // The public key of the backend service authorized to sign claim requests.
+    // This is the raw public key, hex-encoded.
+    access(all) var minterPublicKey: String
+    // A dictionary to store nonces that have already been claimed to prevent replay attacks.
+    access(all) var claimedNonces: {String: Bool}
+    
     access(all) resource NFT: NonFungibleToken.INFT, MetadataViews.Resolver {
         access(all) let id: UInt64
         access(all) let name: String
@@ -143,29 +152,103 @@ access(all) contract DeveloperBadges: NonFungibleToken {
         return <- create Collection()
     }
 
+    // This private function contains the core logic for creating a new NFT.
+    // It's called by both the Admin resource and the PublicMinter resource.
+    access(contract) fun mint(
+        recipient: &{NonFungibleToken.Receiver},
+        name: String,
+        description: String,
+        thumbnail: String
+    ): @NFT {
+        var newBadge <- create NFT(
+            id: self.totalSupply,
+            name: name,
+            description: description,
+            thumbnail: thumbnail
+        )
+
+        emit BadgeMinted(
+            id: newBadge.id,
+            recipient: recipient.owner!.address,
+            name: name
+        )
+
+        self.totalSupply = self.totalSupply + UInt64(1)
+
+        return <-newBadge
+    }
+
+    // The PublicMinter resource allows anyone to claim a badge if they provide a valid signature from the backend service.
+    // This enables a "gasless" claiming experience where a service can pay for the transaction on behalf of the user.
+    access(all) resource PublicMinter {
+        // claimBadge verifies a signature and mints a badge if the signature is valid.
+        //
+        // Parameters:
+        // - recipient: A capability to the user's collection where the badge will be deposited.
+        // - name, description, thumbnail: The metadata for the badge being claimed.
+        // - nonce: A unique string for this claim to prevent replay attacks.
+        // - signature: A hex-encoded signature of the badge metadata and nonce, signed by the minter's private key.
+        access(all) fun claimBadge(
+            recipient: Capability<&{NonFungibleToken.Receiver}>,
+            name: String,
+            description: String,
+            thumbnail: String,
+            nonce: String,
+            signature: String
+        ) {
+            pre {
+                DeveloperBadges.minterPublicKey.length > 0: "Minter public key has not been set by the admin."
+                DeveloperBadges.claimedNonces[nonce] == nil: "This claim has already been processed."
+            }
+
+            let key = Crypto.PublicKey(
+                publicKey: DeveloperBadges.minterPublicKey.decodeHex(),
+                signatureAlgorithm: SignatureAlgorithm.ECDSA_P256
+            )
+
+            // The message that was signed by the backend is the concatenation of the badge metadata and the nonce.
+            let signedData = name.concat(description).concat(thumbnail).concat(nonce).utf8
+
+            let signatureBytes = signature.decodeHex()
+
+            // Verify the signature against the data. The domain separation tag ensures the signature is unique to this action.
+            let isValid = key.verify(
+                signature: signatureBytes,
+                signedData: signedData,
+                domainSeparationTag: "BADGE-CLAIM-V1",
+                hashAlgorithm: HashAlgorithm.SHA3_256
+            )
+
+            if !isValid {
+                panic("Invalid signature for badge claim")
+            }
+
+            // Mark the nonce as used to prevent this claim from being processed again.
+            DeveloperBadges.claimedNonces[nonce] = true
+
+            let recipientRef = recipient.borrow() ?? panic("Could not borrow recipient capability")
+
+            let newBadge <- DeveloperBadges.mint(recipient: recipientRef, name: name, description: description, thumbnail: thumbnail)
+
+            recipientRef.deposit(token: <-newBadge)
+        }
+    }
+
     access(all) resource Admin {
+        // mintBadge allows an admin to directly airdrop a badge to a user's collection.
         access(all) fun mintBadge(
-            recipient: &AnyResource{NonFungibleToken.CollectionPublic},
+            recipient: &{NonFungibleToken.Receiver},
             name: String,
             description: String,
             thumbnail: String
         ) {
-            var newBadge <- create NFT(
-                id: DeveloperBadges.totalSupply,
-                name: name,
-                description: description,
-                thumbnail: thumbnail
-            )
-
-            emit BadgeMinted(
-                id: newBadge.id,
-                recipient: recipient.owner!.address,
-                name: name
-            )
-
+            let newBadge <- DeveloperBadges.mint(recipient: recipient, name: name, description: description, thumbnail: thumbnail)
             recipient.deposit(token: <-newBadge)
+        }
 
-            DeveloperBadges.totalSupply = DeveloperBadges.totalSupply + UInt64(1)
+        // setMinterPublicKey allows the admin to set or rotate the public key used for verifying claim signatures.
+        access(all) fun setMinterPublicKey(publicKey: String) {
+            DeveloperBadges.minterPublicKey = publicKey
         }
     }
 
@@ -174,9 +257,21 @@ access(all) contract DeveloperBadges: NonFungibleToken {
         self.CollectionStoragePath = /storage/developerBadgesCollection
         self.CollectionPublicPath = /public/developerBadgesCollection
         self.AdminStoragePath = /storage/developerBadgesAdmin
+        self.MinterStoragePath = /storage/developerBadgesMinter
+        self.MinterPublicPath = /public/developerBadgesMinter
+
+        self.minterPublicKey = ""
+        self.claimedNonces = {}
 
         let admin <- create Admin()
         self.account.save(<-admin, to: self.AdminStoragePath)
+
+        // Create a PublicMinter resource and save it to the account's storage.
+        let minter <- create PublicMinter()
+        self.account.save(<-minter, to: self.MinterStoragePath)
+
+        // Link the PublicMinter resource to a public path so that anyone can access it.
+        self.account.link<&DeveloperBadges.PublicMinter>(self.MinterPublicPath, target: self.MinterStoragePath)
 
         emit ContractInitialized()
     }
