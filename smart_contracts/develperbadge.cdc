@@ -15,6 +15,7 @@ access(all) contract DeveloperBadges: NonFungibleToken {
     access(all) let CollectionPublicPath: PublicPath
     access(all) let AdminStoragePath: StoragePath
     access(all) let MinterStoragePath: StoragePath
+    access(all) let CollectionProviderPath: PrivatePath
     access(all) let MinterPublicPath: PublicPath
 
     // The public key of the backend service authorized to sign claim requests.
@@ -74,7 +75,7 @@ access(all) contract DeveloperBadges: NonFungibleToken {
                     return MetadataViews.NFTCollectionData(
                         storagePath: DeveloperBadges.CollectionStoragePath,
                         publicPath: DeveloperBadges.CollectionPublicPath,
-                        providerPath: /private/developerBadgesCollection, // This is a private path, so it's not exposed in the view
+                        providerPath: DeveloperBadges.CollectionProviderPath,
                         publicCollection: Type<&DeveloperBadges.Collection{NonFungibleToken.CollectionPublic}>(),
                         publicLinkedType: Type<&DeveloperBadges.Collection{DeveloperBadges.DeveloperBadgesCollectionPublic, NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection}>(),
                         providerLinkedType: Type<&DeveloperBadges.Collection{NonFungibleToken.Provider, MetadataViews.ResolverCollection}>(),
@@ -258,6 +259,7 @@ access(all) contract DeveloperBadges: NonFungibleToken {
         self.CollectionPublicPath = /public/developerBadgesCollection
         self.AdminStoragePath = /storage/developerBadgesAdmin
         self.MinterStoragePath = /storage/developerBadgesMinter
+        self.CollectionProviderPath = /private/developerBadgesCollectionProvider
         self.MinterPublicPath = /public/developerBadgesMinter
 
         self.minterPublicKey = ""
