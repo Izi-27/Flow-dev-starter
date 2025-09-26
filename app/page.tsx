@@ -62,11 +62,11 @@ export default function HomePage() {
               </div>
               <CardTitle>Smart Contract Templates</CardTitle>
               <CardDescription>
-                Ready-to-use Cadence contracts for NFTs, fungible tokens, and staking mechanisms.
+                Instantly deploy production-ready Cadence contracts for NFTs, tokens, and staking.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm">
                 <li>• NFT collection with metadata</li>
                 <li>• ERC-20 style fungible tokens</li>
                 <li>• Staking and rewards contracts</li>
@@ -88,11 +88,11 @@ export default function HomePage() {
               </div>
               <CardTitle>CLI Deployment Tools</CardTitle>
               <CardDescription>
-                Simple command-line scripts to deploy contracts and interact with the Flow network.
+                Deploy contracts, mint tokens, and manage your project with powerful command-line scripts.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm">
                 <li>• One-command contract deployment</li>
                 <li>• Interactive transaction scripts</li>
                 <li>• Network configuration management</li>
@@ -114,11 +114,11 @@ export default function HomePage() {
               </div>
               <CardTitle>Frontend Integration</CardTitle>
               <CardDescription>
-                React hooks and components for seamless wallet integration and blockchain interactions.
+                Integrate wallet connections and transactions into your React app with pre-built hooks and components.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm">
                 <li>• Wallet connection hooks</li>
                 <li>• Transaction signing components</li>
                 <li>• NFT balance queries</li>
@@ -138,16 +138,19 @@ export default function HomePage() {
       {/* Stats Section */}
       <section className="container py-24">
         <div className="grid md:grid-cols-3 gap-8 text-center">
-          <div className="space-y-2">
-            <div className="text-4xl font-bold text-primary">10+</div>
-            <div className="text-sm text-muted-foreground">Smart Contract Templates</div>
+          <div className="flex flex-col items-center gap-2">
+            <Code className="h-8 w-8 text-primary" />
+            <div className="text-4xl font-bold">3+</div>
+            <div className="text-sm text-muted-foreground">Contract Templates</div>
           </div>
-          <div className="space-y-2">
-            <div className="text-4xl font-bold text-primary">5+</div>
-            <div className="text-sm text-muted-foreground">CLI Tools</div>
+          <div className="flex flex-col items-center gap-2">
+            <Terminal className="h-8 w-8 text-primary" />
+            <div className="text-4xl font-bold">7+</div>
+            <div className="text-sm text-muted-foreground">CLI Scripts</div>
           </div>
-          <div className="space-y-2">
-            <div className="text-4xl font-bold text-primary">15+</div>
+          <div className="flex flex-col items-center gap-2">
+            <Puzzle className="h-8 w-8 text-primary" />
+            <div className="text-4xl font-bold">8+</div>
             <div className="text-sm text-muted-foreground">Integration Examples</div>
           </div>
         </div>
@@ -212,13 +215,13 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold">Twitter</h4>
+              <h4 className="font-semibold">Community</h4>
               <div className="space-y-2 text-sm">
                 <Link
                   href="https://x.com/flow_blockchain?s=21"
                   className="block text-muted-foreground hover:text-foreground"
                 >
-                  GitHub
+                  Twitter
                 </Link>
                 <Link href="https://discord.gg/flow" className="block text-muted-foreground hover:text-foreground">
                   Discord
@@ -246,7 +249,7 @@ export default function HomePage() {
           </div>
 
           <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 FlowDevKit. Built for the Flow blockchain community.</p>
+            <p>&copy; {new Date().getFullYear()} FlowDevKit. Built for the Flow blockchain community.</p>
           </div>
         </div>
       </footer>
